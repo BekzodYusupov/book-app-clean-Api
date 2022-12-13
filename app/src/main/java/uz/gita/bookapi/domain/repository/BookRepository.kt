@@ -1,13 +1,11 @@
 package uz.gita.bookapi.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import uz.gita.bookapi.data.source.remote.dto.request.ChangeFavRequest
 import uz.gita.bookapi.data.source.remote.dto.request.DeleteRequest
 import uz.gita.bookapi.data.source.remote.dto.request.PostBookRequest
 import uz.gita.bookapi.data.source.remote.dto.request.PutBookRequest
-import uz.gita.bookapi.data.source.remote.dto.response.BookResponse
-import uz.gita.bookapi.data.source.remote.dto.response.BooksResponse
-import uz.gita.bookapi.data.source.remote.dto.response.PostBookResponse
-import uz.gita.bookapi.data.source.remote.dto.response.PutBookResponse
+import uz.gita.bookapi.data.source.remote.dto.response.*
 import uz.gita.bookapi.utils.ResultData
 
 interface BookRepository {
@@ -15,5 +13,5 @@ interface BookRepository {
     fun getBooks(): Flow<ResultData<BooksResponse>>
     fun deleteBook(deleteRequest: DeleteRequest): Flow<ResultData<BookResponse>>
     fun putBook(putBookRequest: PutBookRequest): Flow<ResultData<PutBookResponse>>
-    fun changeFav(bookId: Int): Flow<ResultData<BookResponse>>
+    fun changeFav(changeFavRequest: ChangeFavRequest): Flow<ResultData<ChangeFavResponse>>
 }

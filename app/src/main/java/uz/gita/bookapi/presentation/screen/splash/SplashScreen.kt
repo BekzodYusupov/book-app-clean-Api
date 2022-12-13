@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import uz.gita.bookapi.R
 import uz.gita.bookapi.presentation.viewModel.SplashViewModelImpl
@@ -17,7 +16,7 @@ class SplashScreen : Fragment(R.layout.screen_splash) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.openSignIn()
+            viewModel.openSignInOrHome()
         }
     }
 }

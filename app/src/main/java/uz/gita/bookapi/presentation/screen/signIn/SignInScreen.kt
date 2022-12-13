@@ -40,7 +40,7 @@ class SignInScreen : Fragment(R.layout.screen_sign_in) {
 
         viewModel.loading.onEach {
             Log.d("zzz", "loading = $it")
-            if (it) {
+            if (it.fullScreen) {
                 viewBinding.progress.visibility = View.VISIBLE
                 viewBinding.loadingView.visibility = View.VISIBLE
                 delay(5000)

@@ -12,6 +12,7 @@ import uz.gita.bookapi.domain.usecase.SignInUseCase
 import uz.gita.bookapi.navigation.Navigator
 import uz.gita.bookapi.presentation.screen.signIn.SignInScreenDirections
 import uz.gita.bookapi.presentation.screen.signIn.SignInViewModel
+import uz.gita.bookapi.utils.LoadingType
 import uz.gita.bookapi.utils.ResultData
 import javax.inject.Inject
 
@@ -23,9 +24,9 @@ class SignInViewModelImpl @Inject constructor(
 
     override val failureFlow: MutableSharedFlow<String> =
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    override val successFlow: MutableSharedFlow<Unit> =
+    override val successFlow: MutableSharedFlow<Any> =
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    override val loading: MutableSharedFlow<Boolean> =
+    override val loading: MutableSharedFlow<LoadingType> =
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     override val hasConnection: MutableSharedFlow<Boolean> =
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)

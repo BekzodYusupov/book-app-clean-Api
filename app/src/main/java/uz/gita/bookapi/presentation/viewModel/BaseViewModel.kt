@@ -1,6 +1,7 @@
 package uz.gita.bookapi.presentation.viewModel
 
 import kotlinx.coroutines.flow.MutableSharedFlow
+import uz.gita.bookapi.utils.LoadingType
 
 /**
 Created: Bekzod Yusupov
@@ -9,8 +10,8 @@ Time: 19:08
  */
 interface BaseViewModel {
     val failureFlow: MutableSharedFlow<String>
-    val successFlow: MutableSharedFlow<Unit>
-    val loading: MutableSharedFlow<Boolean>
+    val successFlow: MutableSharedFlow<Any>
+    val loading: MutableSharedFlow<LoadingType>
     val hasConnection: MutableSharedFlow<Boolean>
     val isValidFlow: MutableSharedFlow<Boolean>
 }

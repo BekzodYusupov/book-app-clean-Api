@@ -17,7 +17,9 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashScreen_to_baseScreen"
-            app:destination="@id/baseScreen" />
+            app:destination="@id/baseScreen"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signUpScreen"

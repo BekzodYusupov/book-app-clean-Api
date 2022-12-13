@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_blue">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etTitle"
+        style="@style/EditText"
+        android:layout_marginTop="32dp"
+        android:hint="Title"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@id/etDesc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etDesc"
+        style="@style/EditText"
+        android:hint="Description"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@id/etAuthor"
+        app:layout_constraintEnd_toEndOf="@id/etTitle"
+        app:layout_constraintStart_toStartOf="@id/etTitle"
+        app:layout_constraintTop_toBottomOf="@+id/etTitle" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etAuthor"
+        style="@style/EditText"
+        android:hint="Author"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@id/etPageCount"
+        app:layout_constraintEnd_toEndOf="@+id/etDesc"
+        app:layout_constraintStart_toStartOf="@+id/etDesc"
+        app:layout_constraintTop_toBottomOf="@+id/etDesc" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etPageCount"
+        style="@style/EditText"
+        android:hint="Page Count"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@id/btnSubmit"
+        app:layout_constraintEnd_toEndOf="@+id/etDesc"
+        app:layout_constraintStart_toStartOf="@+id/etDesc"
+        app:layout_constraintTop_toBottomOf="@+id/etAuthor" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        style="@style/ActionButton"
+        android:layout_marginVertical="32dp"
+        android:text="@string/submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/etPageCount"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/etPageCount"
+        app:layout_constraintTop_toBottomOf="@+id/etPageCount" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

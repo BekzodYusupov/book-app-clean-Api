@@ -40,7 +40,7 @@ class SignUpScreen : Fragment(R.layout.screen_sign_up) {
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.loading.onEach {
-            progressVisibilityChanger(it)
+            progressVisibilityChanger(it.fullScreen)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.failureFlow.onEach {

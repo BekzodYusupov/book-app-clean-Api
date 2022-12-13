@@ -6,5 +6,5 @@ data class BooksResponseItem(
     val author: String,
     val description: String,
     val pageCount: Int,
-    val fav: Boolean
+    var fav: Boolean
 )

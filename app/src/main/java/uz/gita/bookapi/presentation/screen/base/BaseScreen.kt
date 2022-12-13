@@ -22,6 +22,7 @@ class BaseScreen : Fragment(R.layout.screen_base) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewBinding.pager.adapter = pagerAdapter
+        viewBinding.pager.isUserInputEnabled = false
 
         viewBinding.bottomNav.setOnItemSelectedListener {
             viewBinding.pager.currentItem = when (it.itemId) {
