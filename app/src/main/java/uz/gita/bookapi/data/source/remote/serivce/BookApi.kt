@@ -18,11 +18,6 @@ interface BookApi {
     suspend fun getBooks(
     ): Response<BooksResponse>
 
-//    @DELETE("book")
-//    suspend fun deleteBook(
-//        @Body deleteRequest: DeleteRequest//to'girlassh kere bu xato
-//    ): Response<BookResponse>
-
     @HTTP(method = "DELETE", path = "book", hasBody = true)
     suspend fun deleteBook(
         @Body deleteRequest: DeleteRequest

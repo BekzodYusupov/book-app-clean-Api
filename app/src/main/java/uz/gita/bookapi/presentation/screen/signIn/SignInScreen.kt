@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.onEach
 import uz.gita.bookapi.R
 import uz.gita.bookapi.databinding.ScreenSignInBinding
 import uz.gita.bookapi.presentation.viewModel.SignInViewModelImpl
-import uz.gita.bookapi.utils.connectivityManager
 import uz.gita.bookapi.utils.mLog
 
 @AndroidEntryPoint
@@ -24,10 +23,6 @@ class SignInScreen : Fragment(R.layout.screen_sign_in) {
     private val viewBinding: ScreenSignInBinding by viewBinding(ScreenSignInBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        connectivityManager(requireContext()){
-            Toast.makeText(requireContext(), "Connected!", Toast.LENGTH_SHORT).show()
-        }
-
         viewBinding.btnSignUp.setOnClickListener { viewModel.openRegister() }
         viewBinding.btnSignIn.setOnClickListener {
             val phone: String = viewBinding.etPhone.text.toString()
@@ -65,7 +60,7 @@ class SignInScreen : Fragment(R.layout.screen_sign_in) {
 
         viewModel.successFlow.onEach {
             Log.d("zzz", "success = $it")
-            viewModel.openHome()
+            viewModel.openVerify()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

@@ -22,11 +22,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class RemoteDatabaseModule {
 
-    @Provides
-    fun loggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor()
-        .setLevel(HttpLoggingInterceptor.Level.BODY)
+        @Provides
+        @Singleton
+        fun loggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor()
+            .setLevel(HttpLoggingInterceptor.Level.BODY)
 
     @Provides
+    @Singleton
     fun client(
         @ApplicationContext context: Context, loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {

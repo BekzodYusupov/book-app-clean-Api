@@ -27,37 +27,38 @@ class AuthRepositoryImpl @Inject constructor(
         emit(ResultData.HasConnection(true))
 
         if (connectionUtil.hasConnection()) {
-                mLog("repo-signUp-hasConnection")
-                emit(ResultData.Loading(LoadingType(fullScreen = false)))
-                val response = authApi.signUp(signUpRequest)
-                mLog("repo-signUp-hasConnection after response")
-                if (response.isSuccessful) {
+            mLog("repo-signUp-hasConnection")
+            emit(ResultData.Loading(LoadingType(fullScreen = false)))
+            val response = authApi.signUp(signUpRequest)
+            mLog("repo-signUp-hasConnection after response")
+            if (response.isSuccessful) {
+                mLog("repo-signUp-hasConnection after response is successfully managed")
+                response.body()?.let { token ->
                     mLog("repo-signUp-hasConnection after response is successfully managed")
-                    response.body()?.let { token ->
-                        mLog("repo-signUp-hasConnection after response is successfully managed")
 //                        sharedPref.token = token.token
-                        sharedPref.token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2NCwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDgyLyIsImV4cCI6MTY5NjAwNDE5Mn0.t-4xv6o7LxfHGYuLsxOyfYzlvwLyCyGqPpaT6qf5LSU"
-                        emit(ResultData.Success(Unit))
-                        emit(ResultData.Loading(LoadingType(fullScreen = true)))
-                    }
-                } else {
-                    response.body()?.let {
-                        emit(ResultData.Failure(it.token))
-                        emit(ResultData.Loading(LoadingType(fullScreen = false)))
-                    }
+                    sharedPref.token =
+                        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2NCwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDgyLyIsImV4cCI6MTY5NjAwNDE5Mn0.t-4xv6o7LxfHGYuLsxOyfYzlvwLyCyGqPpaT6qf5LSU"
+                    emit(ResultData.Success(Unit))
+                    emit(ResultData.Loading(LoadingType(fullScreen = true)))
                 }
             } else {
-                emit(ResultData.HasConnection(false))
+                response.body()?.let {
+                    emit(ResultData.Failure(it.token))
+                    emit(ResultData.Loading(LoadingType(fullScreen = false)))
+                }
             }
-        }.catch { error ->
-            error.message?.let {
-                mLog("Failure ${error.cause}")
-                mLog("message ${error.message}")
-                mLog("Failure ${error.cause}")
-                emit(ResultData.Failure(it))
-                emit(ResultData.Loading(LoadingType(fullScreen = false)))
-            }
-        }.flowOn(IO)
+        } else {
+            emit(ResultData.HasConnection(false))
+        }
+    }.catch { error ->
+        error.message?.let {
+            mLog("Failure ${error.cause}")
+            mLog("message ${error.message}")
+            mLog("Failure ${error.cause}")
+            emit(ResultData.Failure(it))
+            emit(ResultData.Loading(LoadingType(fullScreen = false)))
+        }
+    }.flowOn(IO)
 
     override fun signUpVerify(verifyRequest: VerifyRequest): Flow<ResultData<Unit>> =
         flow<ResultData<Unit>> {
@@ -99,6 +100,7 @@ class AuthRepositoryImpl @Inject constructor(
                 if (response.isSuccessful) {
                     response.body()?.let {
                         Log.d("zzz", "Repository: sign in inside if -> has Connection->is successfull -> body-> $it")
+                        sharedPref.token = it.token
                         emit(ResultData.Success(Unit))
                         emit(ResultData.Loading(LoadingType(fullScreen = false)))
                     }
@@ -123,10 +125,12 @@ class AuthRepositoryImpl @Inject constructor(
             if (connectionUtil.hasConnection()) {
                 emit(ResultData.HasConnection(true))
                 emit(ResultData.Loading(LoadingType(fullScreen = false)))
-                val response = authApi.signInVerify("Bearer ${sharedPref.token}", verifyRequest)
+                val response = authApi.signInVerify(verifyRequest)
+//                val response = authApi.signInVerify("Bearer ${sharedPref.token}", verifyRequest)
                 if (response.isSuccessful) {
                     response.body()?.let { token ->
                         sharedPref.token = token.token
+                        sharedPref.signedIn = true
                         emit(ResultData.Success(Unit))
                     }
                 }

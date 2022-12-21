@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import uz.gita.bookapi.data.source.remote.dto.request.PostBookRequest
-import uz.gita.bookapi.data.source.remote.dto.request.PutBookRequest
-import uz.gita.bookapi.data.source.remote.dto.response.BooksResponseItem
+import android.widget.Toast
+import uz.gita.bookapi.data.source.local.entity.BookResponseEntity
+import uz.gita.bookapi.data.source.local.entity.State
 import uz.gita.bookapi.databinding.DialogEditBinding
 import uz.gita.bookapi.utils.config
 import uz.gita.bookapi.utils.mLog
@@ -19,22 +19,25 @@ Time: 16:27
  */
 class HomeDialog(context: Context) : Dialog(context) {
     private lateinit var binding: DialogEditBinding
-    private var id = -1
-    private var putBookListener: ((PutBookRequest) -> Unit)? = null
-    private var postBookListener: ((PostBookRequest) -> Unit)? = null
-    var setPredefinedText: ((BooksResponseItem) -> Unit)? = null
+    private var book: BookResponseEntity? = null
+    private var putBookListener: ((BookResponseEntity) -> Unit)? = null
+    private var postBookListener: ((BookResponseEntity) -> Unit)? = null
+    var setPredefinedText: ((BookResponseEntity) -> Unit)? = null
 
-    fun triggerPutBookListener(block: (PutBookRequest) -> Unit) {
+    fun triggerPutBookListener(block: (BookResponseEntity) -> Unit) {
+        mLog("trigger put from dialog")
         putBookListener = block
     }
 
-    fun triggerPostBookListener(block: (PostBookRequest) -> Unit) {
+    fun triggerPostBookListener(block: (BookResponseEntity) -> Unit) {
+        mLog("trigger post from dialog")
         postBookListener = block
     }
 
-    private fun triggerPredefinedText(block: (BooksResponseItem) -> Unit) {
+    private fun triggerPredefinedText(block: (BookResponseEntity) -> Unit) {
         setPredefinedText = block
     }
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,15 +48,49 @@ class HomeDialog(context: Context) : Dialog(context) {
             val title = binding.etTitle.text.toString()
             val desc = binding.etDesc.text.toString()
             val author = binding.etAuthor.text.toString()
-            val page = binding.etPageCount.text.toString().toInt()
+            val page = binding.etPageCount.text.toString()
 
-            if (id == -1) {
-                val postBookRequest = PostBookRequest(title, author, desc, page)
-                postBookListener?.invoke(postBookRequest)
+            if (page.isEmpty()) {
+                Toast.makeText(context, "page bo'sh bo'lmasligi kere", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (title.length <= 3) {
+                Toast.makeText(context, "Title uzunligi kamida 3 ta bo'lishi kere", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (desc.length < 30) {
+                Toast.makeText(context, "Description uzunligi 30 dan katta bo'lishi kere", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (author.length < 10) {
+                Toast.makeText(context, "Author uzunligi 10 dan katta bo'lishi kere", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (book == null) {
+                mLog("Dialog: books is null so post book")
+                val entity = BookResponseEntity(
+                    title = title,
+                    author = author,
+                    description = desc,
+                    pageCount = page.toInt(),
+                    state = State.LocalAdded
+                )
+                postBookListener?.invoke(entity)
                 dismiss()
             } else {
-                val putRequest = PutBookRequest(id, title, author, desc, page)
-                putBookListener?.invoke(putRequest)
+                mLog("Dialog: books isn't null so post book")
+
+                val entity = BookResponseEntity(
+                    id = book!!.id,
+                    title = title,
+                    author = author,
+                    description = desc,
+                    pageCount = page.toInt(),
+                    state = State.LocalEdited,
+                    fav = book!!.fav
+                )
+                putBookListener?.invoke(entity)
                 dismiss()
             }
 
@@ -63,7 +100,7 @@ class HomeDialog(context: Context) : Dialog(context) {
     override fun show() {
         super.show()
         triggerPredefinedText {
-            id = it.id
+            book = it
             binding.apply {
                 etTitle.setText(it.title)
                 etDesc.setText(it.description)
@@ -81,7 +118,7 @@ class HomeDialog(context: Context) : Dialog(context) {
             etAuthor.setText("")
             etPageCount.setText("")
         }
-        id = -1
+        book = null
     }
 
 }

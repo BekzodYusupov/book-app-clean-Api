@@ -4,20 +4,17 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import uz.gita.bookapi.domain.usecase.BaseUseCase
-import uz.gita.bookapi.domain.usecase.HomeUseCase
-import uz.gita.bookapi.domain.usecase.SignInUseCase
-import uz.gita.bookapi.domain.usecase.SignUpUseCase
-import uz.gita.bookapi.domain.usecase.impl.BaseUseCaseImpl
-import uz.gita.bookapi.domain.usecase.impl.HomeUseCaseImpl
-import uz.gita.bookapi.domain.usecase.impl.SignInUseCaseImpl
-import uz.gita.bookapi.domain.usecase.impl.SignUpUseCaseImpl
+import uz.gita.bookapi.domain.usecase.*
+import uz.gita.bookapi.domain.usecase.impl.*
 
 @Module
 @InstallIn(ViewModelComponent::class)
 interface UseCaseModule {
     @Binds
     fun bindSignInUseCase(impl: SignInUseCaseImpl): SignInUseCase
+
+    @Binds
+    fun bindSignInVerifyUseCase(impl: SignInVerifyUseCaseImpl): SignInVerifyUseCase
 
     @Binds
     fun bindSignUpUseCase(impl: SignUpUseCaseImpl): SignUpUseCase
@@ -27,4 +24,5 @@ interface UseCaseModule {
 
     @Binds
     fun bindHomeUseCase(impl: HomeUseCaseImpl): HomeUseCase
+
 }

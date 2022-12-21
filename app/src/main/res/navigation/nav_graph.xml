@@ -57,7 +57,13 @@
         android:id="@+id/signInVerifyScreen"
         tools:layout="@layout/screen_sign_in_verify"
         android:name="uz.gita.bookapi.presentation.screen.signInVerify.SignInVerifyScreen"
-        android:label="SignInVerifyScreen" />
+        android:label="SignInVerifyScreen" >
+        <action
+            android:id="@+id/action_signInVerifyScreen_to_baseScreen"
+            app:destination="@id/baseScreen"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         tools:layout="@layout/screen_base"
         android:id="@+id/baseScreen"

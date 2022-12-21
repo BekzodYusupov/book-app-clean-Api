@@ -8,16 +8,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import uz.gita.bookapi.R
-import uz.gita.bookapi.data.source.remote.dto.request.ChangeFavRequest
-import uz.gita.bookapi.data.source.remote.dto.request.DeleteRequest
-import uz.gita.bookapi.data.source.remote.dto.response.BooksResponse
 import uz.gita.bookapi.data.source.remote.dto.response.ChangeFavResponse
 import uz.gita.bookapi.databinding.ScreenHomeBinding
+import uz.gita.bookapi.presentation.screen.home.adapter.HomeReAdapter
 import uz.gita.bookapi.presentation.screen.home.dialog.HomeDialog
 import uz.gita.bookapi.presentation.viewModel.HomeViewModelImpl
+import uz.gita.bookapi.utils.connectivityManager
 import uz.gita.bookapi.utils.mLog
 
 /**
@@ -31,30 +32,40 @@ Time: 15:09
 class HomeScreen : Fragment(R.layout.screen_home) {
     private val viewBinding: ScreenHomeBinding by viewBinding(ScreenHomeBinding::bind)
     private val viewModel: HomeViewModel by viewModels<HomeViewModelImpl>()
-    private val homeAdapter: HomeAdapter by lazy(mode = LazyThreadSafetyMode.NONE) { HomeAdapter() }
+    private val homeAdapter: HomeReAdapter = HomeReAdapter()
     private val homeDialog: HomeDialog by lazy(mode = LazyThreadSafetyMode.NONE) { HomeDialog(requireContext()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewBinding.container.adapter = homeAdapter
-
-        homeAdapter.triggerBookMarkClickListener { id ->
-            val changeFavRequest = ChangeFavRequest(bookId = id)
-            viewModel.changeFav(changeFavRequest)
+        connectivityManager(requireContext(), {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                viewBinding.internetIndicator.setCardBackgroundColor(resources.getColor(R.color.green, null))
+                Toast.makeText(requireContext(), "Yes Internet", Toast.LENGTH_SHORT).show()
+                viewModel.getBooks()
+            }
+        }) {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                viewBinding.internetIndicator.setCardBackgroundColor(resources.getColor(R.color.red, null))
+                Toast.makeText(requireContext(), "No Internet", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        homeAdapter.triggerEditClickListener { booksResponseItem ->
-            mLog("sending booksResponseItem to dialog data-> $booksResponseItem")
-            homeDialog.setPredefinedText?.invoke(booksResponseItem)
+        viewBinding.container.adapter = homeAdapter
+
+        homeAdapter.triggerBookMarkClickListener {
+            viewModel.changeFav(it)
+        }
+
+        homeAdapter.triggerEditClickListener { bookResponseEntity ->
+            mLog("sending bookResponseEntity to dialog data-> $bookResponseEntity")
             homeDialog.show()
+            homeDialog.setPredefinedText?.invoke(bookResponseEntity)
         }
 
         homeAdapter.triggerDeleteClickListener {
-            val deleteRequest = DeleteRequest(it.toString())
-            viewModel.deleteBook(deleteRequest)
+            viewModel.deleteBook(it)
         }
 
-        viewBinding.fabAdd.setOnClickListener{
+        viewBinding.fabAdd.setOnClickListener {
             homeDialog.show()
         }
 
@@ -66,14 +77,19 @@ class HomeScreen : Fragment(R.layout.screen_home) {
             viewModel.putBook(it)
         }
 
-        viewModel.loading.onEach {
-            mLog("ScreenHome loading - ${it.bookItem}")
-            homeAdapter.progressListener?.invoke(it.bookItem)
+        viewModel.booksFlow.onEach {
+            val stringBuilder = StringBuilder()
+            it.forEach {
+                stringBuilder.append(it.fav).append(" ")
+            }
+            mLog(stringBuilder.toString())
+            homeAdapter.submitList(ArrayList(it))
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.loading.onEach {
             if (it.fullScreen) {
                 viewBinding.progress.visibility = View.VISIBLE
                 viewBinding.loadingView.visibility = View.VISIBLE
-
             } else {
                 viewBinding.progress.visibility = View.GONE
                 viewBinding.loadingView.visibility = View.GONE
@@ -92,17 +108,13 @@ class HomeScreen : Fragment(R.layout.screen_home) {
 
         viewModel.successFlow.onEach {
             when (it) {
-                is BooksResponse -> {
-                    homeAdapter.submitList(it)
-                }
+                is String -> Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 is ChangeFavResponse -> {
                     mLog("HomeScreen isLke success - ${it.message}")
-                    homeAdapter.changeFav?.invoke(true)
-                    viewModel.getBooks()
                 }
-                else -> viewModel.getBooks()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-
     }
 }
+
+

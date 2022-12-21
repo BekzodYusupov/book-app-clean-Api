@@ -13,7 +13,7 @@ Date: 2022/12/06
 Time: 18:34
  */
 
-fun connectivityManager(context: Context, block: () -> Unit) {
+fun connectivityManager(context: Context, blockAvailable: () -> Unit, blockUnavailable: () -> Unit) {
     val manager: ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networkRequest = NetworkRequest.Builder()
         .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
@@ -24,7 +24,13 @@ fun connectivityManager(context: Context, block: () -> Unit) {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             // ....whenever internet is available, the code inside this block works automatically
-            block.invoke()
+            blockAvailable.invoke()
+        }
+
+        override fun onLost(network: Network) {
+            super.onLost(network)
+
+            blockUnavailable.invoke()
         }
     })
 }

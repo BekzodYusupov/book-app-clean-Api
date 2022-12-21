@@ -28,7 +28,7 @@ interface AuthApi {
 
     @POST("auth/sign-in/verify")
     suspend fun signInVerify(
-        @Header("Authorization") bearerToken: String,
+//        @Header("Authorization") bearerToken: String,
         @Body verifyRequest: VerifyRequest
     ): Response<TokenResponse>
 }

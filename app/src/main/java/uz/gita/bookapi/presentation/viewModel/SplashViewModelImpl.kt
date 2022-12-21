@@ -20,8 +20,7 @@ class SplashViewModelImpl @Inject constructor(
     override fun openSignInOrHome() {
         viewModelScope.launch {
             delay(1500)
-            if (shP.signedIn) {
-                shP.signedIn = false
+            if (!shP.signedIn) {
                 navigator.navigateTo(SplashScreenDirections.actionSplashScreenToSignInScreen())
             } else {
                 navigator.navigateTo(SplashScreenDirections.actionSplashScreenToBaseScreen())
